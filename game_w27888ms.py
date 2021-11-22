@@ -1,6 +1,7 @@
 from tkinter import Tk, Canvas, PhotoImage
 from time import sleep
 from random import randint
+from math import floor
 
 def jump(event):
     global jumped
@@ -8,10 +9,8 @@ def jump(event):
 
 def collision(pipes):
     beeCoords = canvas.coords(bee)
-    print(beeCoords)
     # checks just the first pipe, if pipe distance too short than add a for loop
     pipeTop = canvas.coords(pipes[0][0])
-    print(pipeTop)
     if pipeTop[2] >= beeCoords[0] >= pipeTop[0] and ((pipeTop[3] + 300) <= beeCoords[1] or beeCoords[1] <= pipeTop[3]):
         return True
     return False
@@ -22,22 +21,32 @@ def start():
     speed = 0
     gravity = 0.3
     hit = False
-    while canvas.coords(bee)[1] < 900 and hit == False:
-        if jumped == True:
-            speed = -9
-            jumped = False
+    dead = False
+    animation = 16
+    while canvas.coords(bee)[1] < 900:
+        if hit == False:
+            if jumped == True:
+                speed = -9
+                jumped = False
+                animation = 0
+            if animation <= 14 or animation % 2 == 0:
+                canvas.itemconfigure(bee, image=beeImages[animation // 2])
+                animation += 1
+            for i in range(len(pipes)):
+                canvas.move(pipes[i][0], -7, 0)
+                canvas.move(pipes[i][1], -7, 0)
+            # If pipe out of screen then generate new one
+            if canvas.coords(pipes[0][0])[2] < 0:
+                pipes.pop(0)
+                newPipe = generatePipes(1, canvas.coords(pipes[len(pipes) - 1][0])[2] + 500)
+                pipes.append(newPipe)
+            hit = collision(pipes)
+        elif hit == True and dead == False:
+            canvas.itemconfigure(bee, image=beeDead)
+            dead = True
         canvas.move(bee, 0, speed)
-        for i in range(len(pipes)):
-            canvas.move(pipes[i][0], -7, 0)
-            canvas.move(pipes[i][1], -7, 0)
-        # If pipe out of screen then generate new one
-        if canvas.coords(pipes[0][0])[2] < 0:
-            pipes.pop(0)
-            newPipe = generatePipes(1, canvas.coords(pipes[len(pipes) - 1][0])[2] + 500)
-            pipes.append(newPipe)
         canvas.update()
-        sleep(0.01)
-        hit = collision(pipes)
+        sleep(0.001)
         if canvas.coords(bee)[1] > 900:
             canvas.coords(bee, 250, 900)
         canvas.coords(bee)[1] += speed
@@ -63,8 +72,21 @@ window = Tk()
 window.title("Kilburn Bee")
 window.geometry("1440x900")
 canvas = Canvas(window, width=1440, height=900)
-beeImage = PhotoImage(file="bee.png")
-bee = canvas.create_image(250, 450, image=beeImage, anchor="s")
+
+# beeImage1 = PhotoImage(file="bee_sprites/bee1.png")
+beeImages = [PhotoImage(file="bee_sprites/bee0.png"), PhotoImage(file="bee_sprites/bee1.png"), PhotoImage(file="bee_sprites/bee2.png"), PhotoImage(file="bee_sprites/bee3.png"), PhotoImage(file="bee_sprites/bee4.png"), PhotoImage(file="bee_sprites/bee5.png"), PhotoImage(file="bee_sprites/bee6.png"), PhotoImage(file="bee_sprites/bee7.png")]
+# beeImage2 = PhotoImage(file="bee_sprites/bee2.png")
+# beeImage3 = PhotoImage(file="bee_sprites/bee3.png")
+# beeImage4 = PhotoImage(file="bee_sprites/bee4.png")
+# beeImage5 = PhotoImage(file="bee_sprites/bee5.png")
+# beeImage6 = PhotoImage(file="bee_sprites/bee6.png")
+# beeImage7 = PhotoImage(file="bee_sprites/bee7.png")
+# beeImage8 = PhotoImage(file="bee_sprites/bee8.png")
+beeDead = PhotoImage(file="bee_sprites/dead.png")
+# kilburn = PhotoImage(file="kilburn5.png")
+# canvas.create_image(0, 0, image=kilburn, anchor="nw")
+canvas.pack()
+bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
 jumped = True
 
 
