@@ -7,15 +7,27 @@ def jump(event):
     jumped = True
 
 def collision(pipes):
+    global scoring
     beeCoords = canvas.coords(bee)
     # checks just the first pipe, if pipe distance too short than add a for loop
     pipeTop = canvas.coords(pipes[0][0])
-    if (pipeTop[0] + 160) >= beeCoords[0] >= (pipeTop[0] - 48) and ((beeCoords[1] - 80) <= pipeTop[1] or (pipeTop[1] + 300) <= beeCoords[1]):
-        return True
+    if (pipeTop[0] + 160) >= beeCoords[0] >= (pipeTop[0] - 48):
+        scoring = True
+        if (beeCoords[1] - 80) <= pipeTop[1] or (pipeTop[1] + 300) <= beeCoords[1]:
+            return True
     return False
 
+def plusone(pipes, score):
+    global scoring
+    if scoring == True and canvas.coords(pipes[0][0])[0] + 160 < canvas.coords(bee)[0]:
+        scoring = False
+        return score + 1
+    return score
+
 def start():
-    global jumped
+    global jumped, scoring, score
+    score = 0
+    scoring = False
     speed = 0
     gravity = 0.3
     animation = 16
@@ -42,6 +54,8 @@ def start():
                 newPipe = generatePipes(1, canvas.coords(pipes[len(pipes) - 1][0])[0] + distanceBetweenPipes, sizePipeOpening)
                 pipes.append(newPipe)
             hit = collision(pipes)
+            if scoring == True:
+                score = plusone(pipes, score)
         elif hit == True and dead == False:
             canvas.itemconfigure(bee, image=beeDead)
             canvas.tag_raise(bee)
@@ -49,6 +63,7 @@ def start():
         canvas.move(bee, 0, speed)
         canvas.update()
         sleep(0.00001)
+        print(score)
         if canvas.coords(bee)[1] > 900:
             canvas.itemconfigure(bee, image=beeDead)
             canvas.coords(bee, 250, 900)
@@ -82,7 +97,6 @@ obstacles = [PhotoImage(file="assets/obstacle0.png"), PhotoImage(file="assets/ob
 reverseObstacles = [PhotoImage(file="assets/robstacle0.png"), PhotoImage(file="assets/robstacle1.png"), PhotoImage(file="assets/robstacle2.png"), PhotoImage(file="assets/robstacle3.png")]
 kilburn = PhotoImage(file="assets/kilburn.png")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
-canvas.pack()
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
 jumped = True
 
