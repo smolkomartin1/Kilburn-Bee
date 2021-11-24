@@ -8,8 +8,12 @@ def jump(event):
     jumped = True
 
 def pause(event):
-    global paused
+    global paused, pauseScreen
     paused = not paused
+    if "pauseScreen" in globals():
+        for i in pauseScreen:
+            canvas.delete(i)
+        del pauseScreen
 
 def collision(pipes):
     global scoring
@@ -41,8 +45,8 @@ def start():
     hit = False
     dead = False
     pipes = generatePipes(4, distanceBetweenPipes, sizePipeOpening)
-    honeycomb = canvas.create_image(610, 70, image=honeycombImage)
-    score = canvas.create_text(625, 75, fill="#fbb040", font="Impact 45", text=f"Score: {scoreValue}", anchor="nw")
+    honeycomb = canvas.create_image(600, 70, image=honeycombImage)
+    score = canvas.create_text(615, 75, fill="#fbb040", font="Impact 50", text=f"Score: {scoreValue}", anchor="nw")
     while canvas.coords(bee)[1] < 900:
         if paused != True:
             if hit == False:
@@ -81,6 +85,14 @@ def start():
             canvas.coords(bee)[1] += speed
             speed += gravity
         else:
+            if "pauseScreen" not in globals():
+                global pauseScreen
+                pauseScreen = []
+                pauseScreen.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
+                pauseScreen.append(canvas.create_text(720, 200, fill="white", font="Impact 80", text="PAUSED"))
+                pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
+                pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
+                pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
             canvas.update()
 
 def generatePipes(amount, distancePipes, sizeOpening):
@@ -108,6 +120,7 @@ beeDead = PhotoImage(file="assets/dead.png")
 obstacles = [PhotoImage(file="assets/obstacle0.png"), PhotoImage(file="assets/obstacle1.png"), PhotoImage(file="assets/obstacle2.png"), PhotoImage(file="assets/obstacle3.png")]
 reverseObstacles = [PhotoImage(file="assets/robstacle0.png"), PhotoImage(file="assets/robstacle1.png"), PhotoImage(file="assets/robstacle2.png"), PhotoImage(file="assets/robstacle3.png")]
 honeycombImage = PhotoImage(file="assets/honeycomb.png")
+blacknessImage = PhotoImage(file="assets/blackness.png")
 kilburn = PhotoImage(file="assets/kilburn.png")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
