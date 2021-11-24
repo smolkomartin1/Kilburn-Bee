@@ -1,10 +1,15 @@
-from tkinter import Tk, Canvas, PhotoImage
+# Screen resolution: 1440x900
+from tkinter import Tk, Canvas, PhotoImage, Button
 from time import sleep
 from random import randint
 
 def jump(event):
     global jumped
     jumped = True
+
+def pause(event):
+    global paused
+    paused = not paused
 
 def collision(pipes):
     global scoring
@@ -25,7 +30,7 @@ def plusone(pipes, scoreValue):
     return scoreValue
 
 def start():
-    global jumped, scoring
+    global jumped, paused, scoring
     scoreValue = 0
     scoring = False
     speed = 0
@@ -36,44 +41,47 @@ def start():
     hit = False
     dead = False
     pipes = generatePipes(4, distanceBetweenPipes, sizePipeOpening)
-    honeycomb = canvas.create_image(615, 70, image=honeycombImage)
-    score = canvas.create_text(630, 75, fill="#fbb040", font="Impact 45", text=f"Score: {scoreValue}", anchor="nw")
+    honeycomb = canvas.create_image(610, 70, image=honeycombImage)
+    score = canvas.create_text(625, 75, fill="#fbb040", font="Impact 45", text=f"Score: {scoreValue}", anchor="nw")
     while canvas.coords(bee)[1] < 900:
-        if hit == False:
-            if jumped == True:
-                speed = -9
-                jumped = False
-                animation = 0
-            if animation <= 14 or animation % 2 == 0:
-                canvas.itemconfigure(bee, image=beeImages[animation // 2])
-                animation += 1
-            for i in range(len(pipes)):
-                canvas.move(pipes[i][0], -7, 0)
-                canvas.move(pipes[i][1], -7, 0)
-            # If pipe out of screen then generate new one
-            if canvas.coords(pipes[0][0])[0] < -140:
-                canvas.delete(pipes.pop(0))
-                newPipe = generatePipes(1, canvas.coords(pipes[len(pipes) - 1][0])[0] + distanceBetweenPipes, sizePipeOpening)
-                pipes.append(newPipe)
-                canvas.tag_raise(honeycomb)
-                canvas.tag_raise(score)
-            hit = collision(pipes)
-            if scoring == True:
-                scoreValue = plusone(pipes, scoreValue)
-                canvas.itemconfigure(score, text=f"Score: {scoreValue}")
-        elif hit == True and dead == False:
-            canvas.itemconfigure(bee, image=beeDead)
-            canvas.tag_raise(bee)
-            dead = True
-        canvas.move(bee, 0, speed)
-        canvas.update()
-        sleep(0.00001)
-        if canvas.coords(bee)[1] > 900:
-            canvas.itemconfigure(bee, image=beeDead)
-            canvas.coords(bee, 250, 900)
-            canvas.tag_raise(bee)
-        canvas.coords(bee)[1] += speed
-        speed += gravity
+        if paused != True:
+            if hit == False:
+                if jumped == True:
+                    speed = -9
+                    jumped = False
+                    animation = 0
+                if animation <= 14 or animation % 2 == 0:
+                    canvas.itemconfigure(bee, image=beeImages[animation // 2])
+                    animation += 1
+                for i in range(len(pipes)):
+                    canvas.move(pipes[i][0], -7, 0)
+                    canvas.move(pipes[i][1], -7, 0)
+                # If pipe out of screen then generate new one
+                if canvas.coords(pipes[0][0])[0] < -140:
+                    canvas.delete(pipes.pop(0))
+                    newPipe = generatePipes(1, canvas.coords(pipes[len(pipes) - 1][0])[0] + distanceBetweenPipes, sizePipeOpening)
+                    pipes.append(newPipe)
+                    canvas.tag_raise(honeycomb)
+                    canvas.tag_raise(score)
+                hit = collision(pipes)
+                if scoring == True:
+                    scoreValue = plusone(pipes, scoreValue)
+                    canvas.itemconfigure(score, text=f"Score: {scoreValue}")
+            elif hit == True and dead == False:
+                canvas.itemconfigure(bee, image=beeDead)
+                canvas.tag_raise(bee)
+                dead = True
+            canvas.move(bee, 0, speed)
+            canvas.update()
+            sleep(0.00001)
+            if canvas.coords(bee)[1] > 900:
+                canvas.itemconfigure(bee, image=beeDead)
+                canvas.coords(bee, 250, 900)
+                canvas.tag_raise(bee)
+            canvas.coords(bee)[1] += speed
+            speed += gravity
+        else:
+            canvas.update()
 
 def generatePipes(amount, distancePipes, sizeOpening):
     genPipes = []
@@ -104,8 +112,10 @@ kilburn = PhotoImage(file="assets/kilburn.png")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
 jumped = True
+paused = False
 
 canvas.pack()
 window.bind("<space>", jump)
+window.bind("<Escape>", pause)
 start()
 window.mainloop()
