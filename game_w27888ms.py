@@ -17,16 +17,16 @@ def collision(pipes):
             return True
     return False
 
-def plusone(pipes, score):
+def plusone(pipes, scoreValue):
     global scoring
     if scoring == True and canvas.coords(pipes[0][0])[0] + 160 < canvas.coords(bee)[0]:
         scoring = False
-        return score + 1
-    return score
+        return scoreValue + 1
+    return scoreValue
 
 def start():
-    global jumped, scoring, score
-    score = 0
+    global jumped, scoring
+    scoreValue = 0
     scoring = False
     speed = 0
     gravity = 0.3
@@ -36,6 +36,8 @@ def start():
     hit = False
     dead = False
     pipes = generatePipes(4, distanceBetweenPipes, sizePipeOpening)
+    honeycomb = canvas.create_image(615, 70, image=honeycombImage)
+    score = canvas.create_text(630, 75, fill="#fbb040", font="Impact 45", text=f"Score: {scoreValue}", anchor="nw")
     while canvas.coords(bee)[1] < 900:
         if hit == False:
             if jumped == True:
@@ -53,9 +55,12 @@ def start():
                 canvas.delete(pipes.pop(0))
                 newPipe = generatePipes(1, canvas.coords(pipes[len(pipes) - 1][0])[0] + distanceBetweenPipes, sizePipeOpening)
                 pipes.append(newPipe)
+                canvas.tag_raise(honeycomb)
+                canvas.tag_raise(score)
             hit = collision(pipes)
             if scoring == True:
-                score = plusone(pipes, score)
+                scoreValue = plusone(pipes, scoreValue)
+                canvas.itemconfigure(score, text=f"Score: {scoreValue}")
         elif hit == True and dead == False:
             canvas.itemconfigure(bee, image=beeDead)
             canvas.tag_raise(bee)
@@ -63,7 +68,6 @@ def start():
         canvas.move(bee, 0, speed)
         canvas.update()
         sleep(0.00001)
-        print(score)
         if canvas.coords(bee)[1] > 900:
             canvas.itemconfigure(bee, image=beeDead)
             canvas.coords(bee, 250, 900)
@@ -95,6 +99,7 @@ beeImages = [PhotoImage(file="assets/bee0.png"), PhotoImage(file="assets/bee1.pn
 beeDead = PhotoImage(file="assets/dead.png")
 obstacles = [PhotoImage(file="assets/obstacle0.png"), PhotoImage(file="assets/obstacle1.png"), PhotoImage(file="assets/obstacle2.png"), PhotoImage(file="assets/obstacle3.png")]
 reverseObstacles = [PhotoImage(file="assets/robstacle0.png"), PhotoImage(file="assets/robstacle1.png"), PhotoImage(file="assets/robstacle2.png"), PhotoImage(file="assets/robstacle3.png")]
+honeycombImage = PhotoImage(file="assets/honeycomb.png")
 kilburn = PhotoImage(file="assets/kilburn.png")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
