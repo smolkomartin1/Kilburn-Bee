@@ -1,5 +1,5 @@
 # Screen resolution: 1440x900
-from tkinter import Tk, Canvas, PhotoImage, Button
+from tkinter import Tk, Canvas, PhotoImage, Button, font
 from time import sleep
 from random import randint
 
@@ -13,7 +13,10 @@ def pause(event):
         paused = not paused
         if "pauseScreen" in globals():
             for i in pauseScreen:
-                canvas.delete(i)
+                if type(i) == Button:
+                    i.destroy()
+                else:
+                    canvas.delete(i)
             del pauseScreen
 
 def boss(event):
@@ -120,6 +123,8 @@ def game():
                 pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
                 pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
                 pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
+                pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#999999", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+                pauseScreen[5].place(x=660, y=500)
             if bossed == True and "excel" not in globals():
                 global excel
                 excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
@@ -136,6 +141,7 @@ beeImages = [PhotoImage(file="assets/bee0.png"), PhotoImage(file="assets/bee1.pn
 beeDead = PhotoImage(file="assets/dead.png")
 obstacles = [PhotoImage(file="assets/obstacle0.png"), PhotoImage(file="assets/obstacle1.png"), PhotoImage(file="assets/obstacle2.png"), PhotoImage(file="assets/obstacle3.png")]
 reverseObstacles = [PhotoImage(file="assets/robstacle0.png"), PhotoImage(file="assets/robstacle1.png"), PhotoImage(file="assets/robstacle2.png"), PhotoImage(file="assets/robstacle3.png")]
+buttonImage = PhotoImage(file="assets/buttonImage.png")
 honeycombImage = PhotoImage(file="assets/honeycomb.png")
 blacknessImage = PhotoImage(file="assets/blackness.png")
 excelImage = PhotoImage(file="assets/excel.png")
@@ -143,6 +149,7 @@ kilburn = PhotoImage(file="assets/kilburn.png")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
 window.iconbitmap("assets/bee.ico")
+buttonFont = font.Font(family="Impact", size=30)
 
 jumped = True
 paused = False
