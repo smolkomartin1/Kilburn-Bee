@@ -128,8 +128,11 @@ def game():
             if bossed == True and "excel" not in globals():
                 global excel
                 excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
+                pauseScreen[5].place_forget()
                 window.title("Excel - Financial Report Q4 2021")
                 window.iconbitmap("assets/excelIcon.ico")
+            elif bossed == False and "excel" not in globals():
+                pauseScreen[5].place(x=660, y=500)
             canvas.update()
 
 window = Tk()
