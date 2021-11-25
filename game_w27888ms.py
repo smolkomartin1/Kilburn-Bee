@@ -15,6 +15,39 @@ def pause(event):
             canvas.delete(i)
         del pauseScreen
 
+def boss(event):
+    global bossed, paused, excel
+    if bossed == False:
+        bossed = paused = True
+    else:
+        bossed = False
+        canvas.delete(excel)
+        del excel
+        window.title("Kilburn Bee")
+        window.iconbitmap("assets/bee.ico")
+
+def plusone(pipes, scoreValue):
+    global scoring
+    if scoring == True and canvas.coords(pipes[0][0])[0] + 160 < canvas.coords(bee)[0]:
+        scoring = False
+        return scoreValue + 1
+    return scoreValue
+
+def generatePipes(amount, distancePipes, sizeOpening):
+    genPipes = []
+    if amount == 1:
+        opening = randint(50, 550)
+        genPipes.append(canvas.create_image(distancePipes, opening, image=reverseObstacles[randint(0, 3)], anchor="sw"))
+        genPipes.append(canvas.create_image(distancePipes, opening + sizeOpening, image=obstacles[randint(0, 3)], anchor="nw"))
+    else:
+        for p in range(amount):
+            pair = []
+            opening = randint(50, 550)
+            pair.append(canvas.create_image(1200 + distancePipes * p, opening, image=reverseObstacles[randint(0, 3)], anchor="sw"))
+            pair.append(canvas.create_image(1200 + distancePipes * p, opening + sizeOpening, image=obstacles[randint(0, 3)], anchor="nw"))
+            genPipes.append(pair)
+    return genPipes
+
 def collision(pipes):
     global scoring
     beeCoords = canvas.coords(bee)
@@ -25,13 +58,6 @@ def collision(pipes):
         if (beeCoords[1] - 80) <= pipeTop[1] or (pipeTop[1] + 300) <= beeCoords[1]:
             return True
     return False
-
-def plusone(pipes, scoreValue):
-    global scoring
-    if scoring == True and canvas.coords(pipes[0][0])[0] + 160 < canvas.coords(bee)[0]:
-        scoring = False
-        return scoreValue + 1
-    return scoreValue
 
 def start():
     global jumped, paused, scoring
@@ -93,22 +119,12 @@ def start():
                 pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
                 pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
                 pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
+                if bossed == True:
+                    global excel
+                    excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
+                    window.title("Excel - Financial Report Q4 2021")
+                    window.iconbitmap("assets/excelIcon.ico")
             canvas.update()
-
-def generatePipes(amount, distancePipes, sizeOpening):
-    genPipes = []
-    if amount == 1:
-        opening = randint(50, 550)
-        genPipes.append(canvas.create_image(distancePipes, opening, image=reverseObstacles[randint(0, 3)], anchor="sw"))
-        genPipes.append(canvas.create_image(distancePipes, opening + sizeOpening, image=obstacles[randint(0, 3)], anchor="nw"))
-    else:
-        for p in range(amount):
-            pair = []
-            opening = randint(50, 550)
-            pair.append(canvas.create_image(1200 + distancePipes * p, opening, image=reverseObstacles[randint(0, 3)], anchor="sw"))
-            pair.append(canvas.create_image(1200 + distancePipes * p, opening + sizeOpening, image=obstacles[randint(0, 3)], anchor="nw"))
-            genPipes.append(pair)
-    return genPipes
 
 window = Tk()
 window.title("Kilburn Bee")
@@ -121,14 +137,19 @@ obstacles = [PhotoImage(file="assets/obstacle0.png"), PhotoImage(file="assets/ob
 reverseObstacles = [PhotoImage(file="assets/robstacle0.png"), PhotoImage(file="assets/robstacle1.png"), PhotoImage(file="assets/robstacle2.png"), PhotoImage(file="assets/robstacle3.png")]
 honeycombImage = PhotoImage(file="assets/honeycomb.png")
 blacknessImage = PhotoImage(file="assets/blackness.png")
+excelImage = PhotoImage(file="assets/excel.png")
 kilburn = PhotoImage(file="assets/kilburn.png")
+
+window.iconbitmap("assets/bee.ico")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
 jumped = True
 paused = False
+bossed = False
 
 canvas.pack()
 window.bind("<space>", jump)
 window.bind("<Escape>", pause)
+window.bind("<b>", boss)
 start()
 window.mainloop()
