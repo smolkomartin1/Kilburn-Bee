@@ -8,12 +8,13 @@ def jump(event):
     jumped = True
 
 def pause(event):
-    global paused, pauseScreen
-    paused = not paused
-    if "pauseScreen" in globals():
-        for i in pauseScreen:
-            canvas.delete(i)
-        del pauseScreen
+    global paused, pauseScreen, bossed
+    if bossed != True:
+        paused = not paused
+        if "pauseScreen" in globals():
+            for i in pauseScreen:
+                canvas.delete(i)
+            del pauseScreen
 
 def boss(event):
     global bossed, paused, excel
@@ -59,7 +60,7 @@ def collision(pipes):
             return True
     return False
 
-def start():
+def game():
     global jumped, paused, scoring
     scoreValue = 0
     scoring = False
@@ -119,11 +120,11 @@ def start():
                 pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
                 pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
                 pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
-                if bossed == True:
-                    global excel
-                    excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
-                    window.title("Excel - Financial Report Q4 2021")
-                    window.iconbitmap("assets/excelIcon.ico")
+            if bossed == True and "excel" not in globals():
+                global excel
+                excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
+                window.title("Excel - Financial Report Q4 2021")
+                window.iconbitmap("assets/excelIcon.ico")
             canvas.update()
 
 window = Tk()
@@ -139,10 +140,10 @@ honeycombImage = PhotoImage(file="assets/honeycomb.png")
 blacknessImage = PhotoImage(file="assets/blackness.png")
 excelImage = PhotoImage(file="assets/excel.png")
 kilburn = PhotoImage(file="assets/kilburn.png")
-
-window.iconbitmap("assets/bee.ico")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
+window.iconbitmap("assets/bee.ico")
+
 jumped = True
 paused = False
 bossed = False
@@ -151,5 +152,5 @@ canvas.pack()
 window.bind("<space>", jump)
 window.bind("<Escape>", pause)
 window.bind("<b>", boss)
-start()
+game()
 window.mainloop()
