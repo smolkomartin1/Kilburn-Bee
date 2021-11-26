@@ -124,14 +124,15 @@ def buttonColorChanger(number):
     window.bind("<Key>", lambda x: bindingChanger(x, number))
 
 def bindingChanger(event, number):
-    global settingsScreen
+    global settingsScreen, pauseScreen
     pressedKey = f"<{event.keysym}>"
     if pressedKey in bindings:
         settingsScreen[number].config(text="Already used")
     else:
-        settingsScreen[number].config(text=pressedKey)
+        settingsScreen[number].config(text=pressedKey, fg="white")
     bindings[number - 5] = pressedKey
-    canvas.itemconfigure(pauseScreen[4], text=f"Press {str(bindings[1])[1:-1].upper()} to continue")
+    if "pauseScreen" in globals():
+        canvas.itemconfigure(pauseScreen[4], text=f"Press {str(bindings[1])[1:-1].upper()} to continue")
     binder(bindings)
 
 def binder(bindings):
@@ -231,15 +232,19 @@ def leaderboard(scoreValue):
     leaderboardScreen.append(canvas.create_text(725, 240, fill="white", font="Impact 45", text="Top 5"))
     for i in range(len(top5)):
         if int(top5[i][0]) > scoreValue or intopfive == True:
-            leaderboardScreen.append(canvas.create_text(445, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[i][1], anchor="nw"))
-            if i == 0:
-                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#ffd700", font="Impact 35", text=top5[i][0], anchor="ne"))
-            elif i == 1:
-                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#c0c0c0", font="Impact 35", text=top5[i][0], anchor="ne"))
-            elif i == 2:
-                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#cd7f32", font="Impact 35", text=top5[i][0], anchor="ne"))
+            if intopfive == True:
+                a = i - 1
             else:
-                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[i][0], anchor="ne"))
+                a = i
+            leaderboardScreen.append(canvas.create_text(445, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[a][1], anchor="nw"))
+            if i == 0:
+                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#ffd700", font="Impact 35", text=top5[a][0], anchor="ne"))
+            elif i == 1:
+                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#c0c0c0", font="Impact 35", text=top5[a][0], anchor="ne"))
+            elif i == 2:
+                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#cd7f32", font="Impact 35", text=top5[a][0], anchor="ne"))
+            else:
+                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[a][0], anchor="ne"))
         elif intopfive == False:
             name = Entry(window, fg="#444444", font="Impact 35", width=18, bd=0)
             leaderboardScreen.append(canvas.create_window(445, 310 + i * 65, window=name, anchor="nw"))
@@ -261,17 +266,13 @@ def storeRecord(scoreValue, place, name):
     global leaderboardScreen, intopfive
     intopfive = False
     nametoadd = name.get()
-    if len(top5) < 5:
-        if len(nametoadd) >= 16:
-            top5.append([int(scoreValue), nametoadd[:16]])
-        else:
-            top5.append([int(scoreValue), nametoadd])
+    if len(nametoadd) >= 16:
+        top5.insert(place, [int(scoreValue), nametoadd[:16]])
+    elif len(nametoadd) == 0:
+        top5.insert(place, [int(scoreValue), "-"])
     else:
-        if len(nametoadd) >= 16:
-            top5[place][1] = nametoadd[:16]
-        else:
-            top5[place][1] = nametoadd
-        top5[place][0] = int(scoreValue)
+        top5.insert(place, [int(scoreValue), nametoadd])
+    top5.pop(5)
     with open("leaderboard.txt", "w") as saving_savefile:
         for x in top5:
             saving_savefile.write(f"{x[0]} {x[1]}\n")
@@ -371,7 +372,7 @@ def game():
                     jumped = False
                     animation = 0
                 if animation <= 14 or animation % 2 == 0:
-                    canvas.itemconfigure(bee, image=beeImages[animation // 2])
+                    canvas.itemconfigure(bee, image=beeImages[int(animation) // 2])
                     animation += 1
                 for i in range(len(pipes)):
                     canvas.move(pipes[i][0], -7, 0)
@@ -446,13 +447,18 @@ bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
 window.iconbitmap("assets/bee.ico")
 buttonFont = font.Font(family="Impact", size=30)
 
-with open("leaderboard.txt", "w+") as leaderboardfile:
+if path.exists("leaderboard.txt") == False:
+    with open("leaderboard.txt", "w") as leaderboardfile2:
+        for i in range(5):
+            leaderboardfile2.write(str('0 -\n'))
+with open("leaderboard.txt") as leaderboardfile:
     top5 = [row.strip().split() for row in leaderboardfile]
+    print(top5)
 if path.exists("bindings.txt"):
     with open("bindings.txt") as bindingsfile:
         bindings = bindingsfile.readline().strip()[1:-1].split("', '")
 else:
-    bindings = ["<space>", "<Escape>", "<c>", "<b>"]
+    bindings = ["<space>", "<Escape>", "<b>", "<c>"]
 
 jumped = True
 inhomepage = True
