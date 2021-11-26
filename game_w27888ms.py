@@ -2,7 +2,7 @@
 from tkinter import Tk, Canvas, PhotoImage, Button, Entry, font
 from time import sleep
 from random import randint
-from os import path
+from os import path, remove
 
 def jump(event):
     global jumped
@@ -22,30 +22,41 @@ def homepage():
     else:
         homepageScreen.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    homepageScreen.append(Button(window, text="Leaderboard", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen[2].place(x=720, y=520, anchor="center")
-    homepageScreen[3].place(x=420, y=650, anchor="center")
-    homepageScreen[4].place(x=720, y=650, anchor="center")
-    homepageScreen[5].place(x=1020, y=650, anchor="center")
-    homepageScreen[6].place(x=720, y=770, anchor="center")
+    homepageScreen[3].place(x=570, y=650, anchor="center")
+    homepageScreen[4].place(x=870, y=650, anchor="center")
+    homepageScreen[5].place(x=720, y=770, anchor="center")
     canvas.update()
 
 def start():
-    global homepageScreen, inhomepage
-    for i in homepageScreen:
-        if type(i) == Button:
-            i.destroy()
-        else:
-            canvas.delete(i)
-    del homepageScreen
-    inhomepage = False
+    global homepageScreen, leaderboardScreen, inhomepage, inleaderboard, honeycomb, score
+    if "homepageScreen" in globals():
+        for i in homepageScreen:
+            if type(i) == Button:
+                i.destroy()
+            else:
+                canvas.delete(i)
+        del homepageScreen
+    elif "leaderboardScreen" in globals():
+        for i in leaderboardScreen:
+            if type(i) == Button:
+                i.destroy()
+            else:
+                canvas.delete(i)
+        canvas.delete("honeycombtag")
+        canvas.delete("scoretag")
+        canvas.delete("piping")
+        del leaderboardScreen
+    inhomepage = inleaderboard = False
+    canvas.coords(bee, 250, 450)
+    canvas.itemconfigure(bee, image=beeImages[7])
     game()
 
 def pause(event):
-    global paused, pauseScreen, bossed, homepageScreen, inhomepage
-    if inhomepage != True:
+    global paused, pauseScreen, bossed, homepageScreen, inhomepage, inleaderboard
+    if inhomepage != True and inleaderboard != True:
         paused = not paused
         if "pauseScreen" not in globals():
             global pauseScreen
@@ -72,7 +83,7 @@ def pause(event):
             del pauseScreen
 
 def boss(event):
-    global bossed, paused, excel, pauseScreen, homepageScreen, inhomepage
+    global bossed, paused, excel, pauseScreen, homepageScreen, leaderboardScreen, intopfive, honeycomb, score
     if bossed == False:
         bossed = True
         if paused != True:
@@ -87,6 +98,13 @@ def boss(event):
         elif "homepageScreen" in globals():
             for b in range(2, len(homepageScreen)):
                 homepageScreen[b].place_forget()
+        elif "leaderboardScreen" in globals() and intopfive == True:
+            leaderboardScreen[len(leaderboardScreen) - 1].place_forget()
+        elif "leaderboardScreen" in globals() and intopfive == False:
+            leaderboardScreen[len(leaderboardScreen) - 4].place_forget()
+            leaderboardScreen[len(leaderboardScreen) - 3].place_forget()
+            leaderboardScreen[len(leaderboardScreen) - 2].place_forget()
+            leaderboardScreen[len(leaderboardScreen) - 1].place_forget()
     else:
         bossed = False
         canvas.delete(excel)
@@ -104,17 +122,24 @@ def boss(event):
             homepageScreen[4].place(x=720, y=650, anchor="center")
             homepageScreen[5].place(x=1020, y=650, anchor="center")
             homepageScreen[6].place(x=720, y=770, anchor="center")
+        elif "leaderboardScreen" in globals() and intopfive == True:
+            leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=810, anchor="center")
+        elif "leaderboardScreen" in globals() and intopfive == False:
+            leaderboardScreen[len(leaderboardScreen) - 4].place(x=575, y=700, anchor="center")
+            leaderboardScreen[len(leaderboardScreen) - 3].place(x=875, y=700, anchor="center")
+            leaderboardScreen[len(leaderboardScreen) - 2].place(x=575, y=800, anchor="center")
+            leaderboardScreen[len(leaderboardScreen) - 1].place(x=875, y=800, anchor="center")
     canvas.update()
 
 def leaderboard(scoreValue):
-    global leaderboardScreen
+    global leaderboardScreen, intopfive, inleaderboard
     intopfive = False
+    inleaderboard = True
     place = 0
     leaderboardScreen.append(canvas.create_image(725, 520, image=leaderboardImage))
     leaderboardScreen.append(canvas.create_image(725, 471, image=leaderboardWindowImage))
     leaderboardScreen.append(canvas.create_image(725, 240, image=bigbuttonImage))
     leaderboardScreen.append(canvas.create_text(725, 240, fill="white", font="Impact 45", text="Top 5"))
-    print(len(top5))
     for i in range(len(top5)):
         if int(top5[i][0]) > scoreValue or intopfive == True:
             leaderboardScreen.append(canvas.create_text(445, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[i][1], anchor="nw"))
@@ -144,7 +169,8 @@ def leaderboard(scoreValue):
         leaderboardButtons()
 
 def storeRecord(scoreValue, place, name):
-    global leaderboardImageScreen
+    global leaderboardScreen, intopfive
+    intopfive = False
     nametoadd = name.get()
     if len(top5) < 5:
         if len(nametoadd) >= 16:
@@ -176,7 +202,7 @@ def storeRecord(scoreValue, place, name):
 
 def leaderboardButtons():
     global leaderboardScreen
-    leaderboardScreen.append(Button(window, text="New Game", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    leaderboardScreen.append(Button(window, text="New Game", image=buttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     leaderboardScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     leaderboardScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     leaderboardScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
@@ -196,14 +222,14 @@ def generatePipes(amount, distancePipes, sizeOpening):
     genPipes = []
     if amount == 1:
         opening = randint(50, 550)
-        genPipes.append(canvas.create_image(distancePipes, opening, image=reverseObstacles[randint(0, 3)], anchor="sw"))
-        genPipes.append(canvas.create_image(distancePipes, opening + sizeOpening, image=obstacles[randint(0, 3)], anchor="nw"))
+        genPipes.append(canvas.create_image(distancePipes, opening, image=reverseObstacles[randint(0, 3)], anchor="sw", tags="piping"))
+        genPipes.append(canvas.create_image(distancePipes, opening + sizeOpening, image=obstacles[randint(0, 3)], anchor="nw", tags="piping"))
     else:
         for p in range(amount):
             pair = []
             opening = randint(50, 550)
-            pair.append(canvas.create_image(1200 + distancePipes * p, opening, image=reverseObstacles[randint(0, 3)], anchor="sw"))
-            pair.append(canvas.create_image(1200 + distancePipes * p, opening + sizeOpening, image=obstacles[randint(0, 3)], anchor="nw"))
+            pair.append(canvas.create_image(1200 + distancePipes * p, opening, image=reverseObstacles[randint(0, 3)], anchor="sw", tags="piping"))
+            pair.append(canvas.create_image(1200 + distancePipes * p, opening + sizeOpening, image=obstacles[randint(0, 3)], anchor="nw", tags="piping"))
             genPipes.append(pair)
     return genPipes
 
@@ -225,8 +251,8 @@ def game():
     sizePipeOpening = 300
     gravity = 0.3
     pipes = generatePipes(4, distanceBetweenPipes, sizePipeOpening)
-    honeycomb = canvas.create_image(600, 70, image=honeycombImage)
-    score = canvas.create_text(615, 75, fill="#fbb040", font="Impact 50", text=f"Score: {scoreValue}", anchor="nw")
+    honeycomb = canvas.create_image(600, 70, image=honeycombImage, tags="honeycombtag")
+    score = canvas.create_text(615, 75, fill="#fbb040", font="Impact 50", text=f"Score: {scoreValue}", anchor="nw", tags="scoretag")
     if path.exists("savefile.txt"):
         settings = []
         jumped = False
@@ -247,7 +273,7 @@ def game():
     else:
         scoring = False
         speed = 0
-        animation = 16
+        animation = 15
         hit = False
         dead = False
     while canvas.coords(bee)[1] < 900:
@@ -297,6 +323,10 @@ def game():
                 saving = False
                 pauseScreen[6].config(text="Saved!")
             canvas.update()
+    if path.exists("savefile.txt"):
+        remove("savefile.txt")
+    for a in range(len(pipes)):
+        canvas.delete(pipes.pop(0))
     leaderboardScreen = []
     leaderboardScreen.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
     canvas.tag_raise(honeycomb)
@@ -329,12 +359,13 @@ buttonFont = font.Font(family="Impact", size=30)
 with open("leaderboard.txt") as leaderboardfile:
     top5 = [row.strip().split() for row in leaderboardfile]
 
-
 jumped = True
 inhomepage = True
+inleaderboard = False
 paused = False
 bossed = False
 saving = False
+restart = False
 
 canvas.pack()
 window.bind("<space>", jump)
