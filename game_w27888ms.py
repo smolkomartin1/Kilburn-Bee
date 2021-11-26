@@ -7,6 +7,30 @@ def jump(event):
     global jumped
     jumped = True
 
+def homepage():
+    homepageList = []
+    homepageList.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
+    homepageList.append(canvas.create_image(720, 240, image=logoImage))
+    homepageList.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=lambda: start(homepageList), compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageList.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageList.append(Button(window, text="Leaderboard", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageList.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageList.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageList[2].place(x=720, y=520, anchor="center")
+    homepageList[3].place(x=420, y=650, anchor="center")
+    homepageList[4].place(x=720, y=650, anchor="center")
+    homepageList[5].place(x=1020, y=650, anchor="center")
+    homepageList[6].place(x=720, y=770, anchor="center")
+    canvas.update()
+
+def start(list):
+    for i in list:
+        if type(i) == Button:
+            i.destroy()
+        else:
+            canvas.delete(i)
+    game()
+
 def pause(event):
     global paused, pauseScreen, bossed
     if bossed != True:
@@ -77,6 +101,12 @@ def game():
     pipes = generatePipes(4, distanceBetweenPipes, sizePipeOpening)
     honeycomb = canvas.create_image(600, 70, image=honeycombImage)
     score = canvas.create_text(615, 75, fill="#fbb040", font="Impact 50", text=f"Score: {scoreValue}", anchor="nw")
+    # Create the ready screen
+    black = canvas.create_image(0, 0, image=blacknessImage, anchor="nw")
+    ready = canvas.create_text(720, 450, fill="#fbb040", font="Impact 100", text="Ready?")
+    canvas.update()
+    sleep(0.7)
+    canvas.delete(ready, black)
     while canvas.coords(bee)[1] < 900:
         if paused != True:
             if hit == False:
@@ -123,16 +153,22 @@ def game():
                 pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
                 pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
                 pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
-                pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#999999", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-                pauseScreen[5].place(x=660, y=500)
+                pauseScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+                pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+                pauseScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+                pauseScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             if bossed == True and "excel" not in globals():
                 global excel
                 excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
-                pauseScreen[5].place_forget()
+                for b in range(5, len(pauseScreen)):
+                    pauseScreen[b].place_forget()
                 window.title("Excel - Financial Report Q4 2021")
                 window.iconbitmap("assets/excelIcon.ico")
             elif bossed == False and "excel" not in globals():
-                pauseScreen[5].place(x=660, y=500)
+                pauseScreen[5].place(x=420, y=500, anchor="center")
+                pauseScreen[6].place(x=720, y=500, anchor="center")
+                pauseScreen[7].place(x=1020, y=500, anchor="center")
+                pauseScreen[8].place(x=720, y=620, anchor="center")
             canvas.update()
 
 window = Tk()
@@ -140,11 +176,13 @@ window.title("Kilburn Bee")
 window.geometry("1440x900")
 canvas = Canvas(window, width=1440, height=900)
 
+logoImage = PhotoImage(file="assets/logo.png")
 beeImages = [PhotoImage(file="assets/bee0.png"), PhotoImage(file="assets/bee1.png"), PhotoImage(file="assets/bee2.png"), PhotoImage(file="assets/bee3.png"), PhotoImage(file="assets/bee4.png"), PhotoImage(file="assets/bee5.png"), PhotoImage(file="assets/bee6.png"), PhotoImage(file="assets/bee7.png")]
 beeDead = PhotoImage(file="assets/dead.png")
 obstacles = [PhotoImage(file="assets/obstacle0.png"), PhotoImage(file="assets/obstacle1.png"), PhotoImage(file="assets/obstacle2.png"), PhotoImage(file="assets/obstacle3.png")]
 reverseObstacles = [PhotoImage(file="assets/robstacle0.png"), PhotoImage(file="assets/robstacle1.png"), PhotoImage(file="assets/robstacle2.png"), PhotoImage(file="assets/robstacle3.png")]
 buttonImage = PhotoImage(file="assets/buttonImage.png")
+bigbuttonImage = PhotoImage(file="assets/bigbuttonImage.png")
 honeycombImage = PhotoImage(file="assets/honeycomb.png")
 blacknessImage = PhotoImage(file="assets/blackness.png")
 excelImage = PhotoImage(file="assets/excel.png")
@@ -162,5 +200,6 @@ canvas.pack()
 window.bind("<space>", jump)
 window.bind("<Escape>", pause)
 window.bind("<b>", boss)
-game()
+homepage()
+# game()
 window.mainloop()
