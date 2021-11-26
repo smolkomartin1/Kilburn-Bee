@@ -453,7 +453,6 @@ if path.exists("leaderboard.txt") == False:
             leaderboardfile2.write(str('0 -\n'))
 with open("leaderboard.txt") as leaderboardfile:
     top5 = [row.strip().split() for row in leaderboardfile]
-    print(top5)
 if path.exists("bindings.txt"):
     with open("bindings.txt") as bindingsfile:
         bindings = bindingsfile.readline().strip()[1:-1].split("', '")
