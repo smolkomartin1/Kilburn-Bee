@@ -2,17 +2,25 @@
 from tkinter import Tk, Canvas, PhotoImage, Button, font
 from time import sleep
 from random import randint
+from os import path
 
 def jump(event):
     global jumped
     jumped = True
+
+def save():
+    global saving
+    saving = True
 
 def homepage():
     global homepageList
     homepageList = []
     homepageList.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
     homepageList.append(canvas.create_image(720, 240, image=logoImage))
-    homepageList.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    if path.exists("savefile.txt"):
+        homepageList.append(Button(window, text="Continue", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    else:
+        homepageList.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageList.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageList.append(Button(window, text="Leaderboard", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageList.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
@@ -48,7 +56,7 @@ def pause(event):
             pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
             pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
             pauseScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-            pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+            pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, command=save, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             pauseScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             pauseScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             pauseScreen[5].place(x=420, y=500, anchor="center")
@@ -132,19 +140,37 @@ def collision(pipes):
     return False
 
 def game():
-    global jumped, paused, scoring
+    global jumped, paused, scoring, saving, pauseScreen
     scoreValue = 0
-    scoring = False
-    speed = 0
-    gravity = 0.3
-    animation = 16
     distanceBetweenPipes = 550
     sizePipeOpening = 300
-    hit = False
-    dead = False
+    gravity = 0.3
     pipes = generatePipes(4, distanceBetweenPipes, sizePipeOpening)
     honeycomb = canvas.create_image(600, 70, image=honeycombImage)
     score = canvas.create_text(615, 75, fill="#fbb040", font="Impact 50", text=f"Score: {scoreValue}", anchor="nw")
+    if path.exists("savefile.txt"):
+        settings = []
+        jumped = False
+        with open("savefile.txt") as file:
+            for line in file:
+                settings.append(line.replace("\n", ""))
+        scoreValue = int(settings[0])
+        scoring = bool("" if settings[1] == "False" else settings[1])
+        speed = float(settings[2])
+        animation = float(settings[3])
+        hit = bool("" if settings[4] == "False" else settings[4])
+        dead = bool("" if settings[4] == "False" else settings[4])
+        for z in range(4):
+            canvas.coords(pipes[z][0], float(settings[6 + (z*2)]), float(settings[7 + (z*2)]))
+            canvas.coords(pipes[z][1], float(settings[6 + (z*2)]), float(settings[7 + (z*2)]) + 300)
+        canvas.itemconfigure(score, text=f"Score: {scoreValue}")
+        pause(0)
+    else:
+        scoring = False
+        speed = 0
+        animation = 16
+        hit = False
+        dead = False
     while canvas.coords(bee)[1] < 900:
         if paused != True:
             if hit == False:
@@ -183,6 +209,14 @@ def game():
             canvas.coords(bee)[1] += speed
             speed += gravity
         else:
+            if saving == True:
+                with open("savefile.txt", "w") as save_file:
+                    save_file.write(f"{scoreValue}\n{scoring}\n{speed}\n{animation}\n{hit}\n{dead}\n")
+                    for p in pipes:
+                        save_file.write(f"{canvas.coords(p[0])[0]}\n")
+                        save_file.write(f"{canvas.coords(p[0])[1]}\n")
+                saving = False
+                pauseScreen[6].config(text="Saved!")
             canvas.update()
 
 window = Tk()
@@ -207,14 +241,14 @@ window.iconbitmap("assets/bee.ico")
 buttonFont = font.Font(family="Impact", size=30)
 
 jumped = True
+inhomepage = True
 paused = False
 bossed = False
-inhomepage = True
+saving = False
 
 canvas.pack()
 window.bind("<space>", jump)
 window.bind("<Escape>", pause)
 window.bind("<b>", boss)
 homepage()
-# game()
 window.mainloop()
