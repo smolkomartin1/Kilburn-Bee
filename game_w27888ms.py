@@ -12,6 +12,10 @@ def save():
     global saving
     saving = True
 
+def cheat(event):
+    global slowmo
+    slowmo = not slowmo
+
 def homepage():
     global homepageScreen
     homepageScreen = []
@@ -22,12 +26,10 @@ def homepage():
     else:
         homepageScreen.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    homepageScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen[2].place(x=720, y=520, anchor="center")
-    homepageScreen[3].place(x=570, y=650, anchor="center")
-    homepageScreen[4].place(x=870, y=650, anchor="center")
-    homepageScreen[5].place(x=720, y=770, anchor="center")
+    homepageScreen[3].place(x=720, y=650, anchor="center")
+    homepageScreen[4].place(x=720, y=770, anchor="center")
     canvas.update()
 
 def start():
@@ -68,12 +70,10 @@ def pause(event):
             pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
             pauseScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, command=save, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-            pauseScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             pauseScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-            pauseScreen[5].place(x=420, y=500, anchor="center")
-            pauseScreen[6].place(x=720, y=500, anchor="center")
-            pauseScreen[7].place(x=1020, y=500, anchor="center")
-            pauseScreen[8].place(x=720, y=620, anchor="center")
+            pauseScreen[5].place(x=570, y=500, anchor="center")
+            pauseScreen[6].place(x=870, y=500, anchor="center")
+            pauseScreen[7].place(x=720, y=620, anchor="center")
         else:
             for i in pauseScreen:
                 if type(i) == Button:
@@ -101,7 +101,6 @@ def boss(event):
         elif "leaderboardScreen" in globals() and intopfive == True:
             leaderboardScreen[len(leaderboardScreen) - 1].place_forget()
         elif "leaderboardScreen" in globals() and intopfive == False:
-            leaderboardScreen[len(leaderboardScreen) - 4].place_forget()
             leaderboardScreen[len(leaderboardScreen) - 3].place_forget()
             leaderboardScreen[len(leaderboardScreen) - 2].place_forget()
             leaderboardScreen[len(leaderboardScreen) - 1].place_forget()
@@ -112,23 +111,19 @@ def boss(event):
         window.title("Kilburn Bee")
         window.iconbitmap("assets/bee.ico")
         if "pauseScreen" in globals():
-            pauseScreen[5].place(x=420, y=500, anchor="center")
-            pauseScreen[6].place(x=720, y=500, anchor="center")
-            pauseScreen[7].place(x=1020, y=500, anchor="center")
-            pauseScreen[8].place(x=720, y=620, anchor="center")
+            pauseScreen[5].place(x=570, y=500, anchor="center")
+            pauseScreen[6].place(x=870, y=500, anchor="center")
+            pauseScreen[7].place(x=720, y=620, anchor="center")
         elif "homepageScreen" in globals():
             homepageScreen[2].place(x=720, y=520, anchor="center")
-            homepageScreen[3].place(x=420, y=650, anchor="center")
-            homepageScreen[4].place(x=720, y=650, anchor="center")
-            homepageScreen[5].place(x=1020, y=650, anchor="center")
-            homepageScreen[6].place(x=720, y=770, anchor="center")
+            homepageScreen[3].place(x=720, y=650, anchor="center")
+            homepageScreen[4].place(x=720, y=770, anchor="center")
         elif "leaderboardScreen" in globals() and intopfive == True:
             leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=810, anchor="center")
         elif "leaderboardScreen" in globals() and intopfive == False:
-            leaderboardScreen[len(leaderboardScreen) - 4].place(x=575, y=700, anchor="center")
-            leaderboardScreen[len(leaderboardScreen) - 3].place(x=875, y=700, anchor="center")
-            leaderboardScreen[len(leaderboardScreen) - 2].place(x=575, y=800, anchor="center")
-            leaderboardScreen[len(leaderboardScreen) - 1].place(x=875, y=800, anchor="center")
+            leaderboardScreen[len(leaderboardScreen) - 3].place(x=575, y=700, anchor="center")
+            leaderboardScreen[len(leaderboardScreen) - 2].place(x=875, y=700, anchor="center")
+            leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=800, anchor="center")
     canvas.update()
 
 def leaderboard(scoreValue):
@@ -204,12 +199,10 @@ def leaderboardButtons():
     global leaderboardScreen
     leaderboardScreen.append(Button(window, text="New Game", image=buttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     leaderboardScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    leaderboardScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     leaderboardScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    leaderboardScreen[len(leaderboardScreen) - 4].place(x=575, y=700, anchor="center")
-    leaderboardScreen[len(leaderboardScreen) - 3].place(x=875, y=700, anchor="center")
-    leaderboardScreen[len(leaderboardScreen) - 2].place(x=575, y=800, anchor="center")
-    leaderboardScreen[len(leaderboardScreen) - 1].place(x=875, y=800, anchor="center")
+    leaderboardScreen[len(leaderboardScreen) - 3].place(x=575, y=700, anchor="center")
+    leaderboardScreen[len(leaderboardScreen) - 2].place(x=875, y=700, anchor="center")
+    leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=800, anchor="center")
 
 def plusone(pipes, scoreValue):
     global scoring
@@ -245,7 +238,7 @@ def collision(pipes):
     return False
 
 def game():
-    global jumped, paused, scoring, saving, pauseScreen, leaderboardScreen
+    global jumped, paused, scoring, saving, pauseScreen, leaderboardScreen, slowmo
     scoreValue = 0
     distanceBetweenPipes = 550
     sizePipeOpening = 300
@@ -306,7 +299,10 @@ def game():
                 dead = True
             canvas.move(bee, 0, speed)
             canvas.update()
-            sleep(0.00001)
+            if slowmo != True:
+                sleep(0.00001)
+            else:
+                sleep(0.05)
             if canvas.coords(bee)[1] > 900:
                 canvas.itemconfigure(bee, image=beeDead)
                 canvas.coords(bee, 250, 900)
@@ -365,11 +361,12 @@ inleaderboard = False
 paused = False
 bossed = False
 saving = False
-restart = False
+slowmo = False
 
 canvas.pack()
 window.bind("<space>", jump)
 window.bind("<Escape>", pause)
 window.bind("<b>", boss)
+window.bind("<c>", cheat)
 homepage()
 window.mainloop()
