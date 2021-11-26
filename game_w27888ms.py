@@ -8,10 +8,11 @@ def jump(event):
     jumped = True
 
 def homepage():
+    global homepageList
     homepageList = []
     homepageList.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
     homepageList.append(canvas.create_image(720, 240, image=logoImage))
-    homepageList.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=lambda: start(homepageList), compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageList.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageList.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageList.append(Button(window, text="Leaderboard", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageList.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
@@ -23,19 +24,38 @@ def homepage():
     homepageList[6].place(x=720, y=770, anchor="center")
     canvas.update()
 
-def start(list):
-    for i in list:
+def start():
+    global homepageList, inhomepage
+    for i in homepageList:
         if type(i) == Button:
             i.destroy()
         else:
             canvas.delete(i)
+    del homepageList
+    inhomepage = False
     game()
 
 def pause(event):
-    global paused, pauseScreen, bossed
-    if bossed != True:
+    global paused, pauseScreen, bossed, homepageList, inhomepage
+    if inhomepage != True:
         paused = not paused
-        if "pauseScreen" in globals():
+        if "pauseScreen" not in globals():
+            global pauseScreen
+            pauseScreen = []
+            pauseScreen.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
+            pauseScreen.append(canvas.create_text(720, 200, fill="white", font="Impact 80", text="PAUSED"))
+            pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
+            pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
+            pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
+            pauseScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+            pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+            pauseScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+            pauseScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+            pauseScreen[5].place(x=420, y=500, anchor="center")
+            pauseScreen[6].place(x=720, y=500, anchor="center")
+            pauseScreen[7].place(x=1020, y=500, anchor="center")
+            pauseScreen[8].place(x=720, y=620, anchor="center")
+        else:
             for i in pauseScreen:
                 if type(i) == Button:
                     i.destroy()
@@ -44,15 +64,39 @@ def pause(event):
             del pauseScreen
 
 def boss(event):
-    global bossed, paused, excel
+    global bossed, paused, excel, pauseScreen, homepageList, inhomepage
     if bossed == False:
-        bossed = paused = True
+        bossed = True
+        if paused != True:
+            pause(0)
+        global excel
+        excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
+        window.title("Excel - Financial Report Q4 2021")
+        window.iconbitmap("assets/excelIcon.ico")
+        if "pauseScreen" in globals():
+            for b in range(5, len(pauseScreen)):
+                pauseScreen[b].place_forget()
+        elif "homepageList" in globals():
+            for b in range(2, len(homepageList)):
+                homepageList[b].place_forget()
     else:
         bossed = False
         canvas.delete(excel)
         del excel
         window.title("Kilburn Bee")
         window.iconbitmap("assets/bee.ico")
+        if "pauseScreen" in globals():
+            pauseScreen[5].place(x=420, y=500, anchor="center")
+            pauseScreen[6].place(x=720, y=500, anchor="center")
+            pauseScreen[7].place(x=1020, y=500, anchor="center")
+            pauseScreen[8].place(x=720, y=620, anchor="center")
+        elif "homepageList" in globals():
+            homepageList[2].place(x=720, y=520, anchor="center")
+            homepageList[3].place(x=420, y=650, anchor="center")
+            homepageList[4].place(x=720, y=650, anchor="center")
+            homepageList[5].place(x=1020, y=650, anchor="center")
+            homepageList[6].place(x=720, y=770, anchor="center")
+    canvas.update()
 
 def plusone(pipes, scoreValue):
     global scoring
@@ -101,12 +145,6 @@ def game():
     pipes = generatePipes(4, distanceBetweenPipes, sizePipeOpening)
     honeycomb = canvas.create_image(600, 70, image=honeycombImage)
     score = canvas.create_text(615, 75, fill="#fbb040", font="Impact 50", text=f"Score: {scoreValue}", anchor="nw")
-    # Create the ready screen
-    black = canvas.create_image(0, 0, image=blacknessImage, anchor="nw")
-    ready = canvas.create_text(720, 450, fill="#fbb040", font="Impact 100", text="Ready?")
-    canvas.update()
-    sleep(0.7)
-    canvas.delete(ready, black)
     while canvas.coords(bee)[1] < 900:
         if paused != True:
             if hit == False:
@@ -145,30 +183,6 @@ def game():
             canvas.coords(bee)[1] += speed
             speed += gravity
         else:
-            if "pauseScreen" not in globals():
-                global pauseScreen
-                pauseScreen = []
-                pauseScreen.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
-                pauseScreen.append(canvas.create_text(720, 200, fill="white", font="Impact 80", text="PAUSED"))
-                pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
-                pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
-                pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
-                pauseScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-                pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-                pauseScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-                pauseScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-            if bossed == True and "excel" not in globals():
-                global excel
-                excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
-                for b in range(5, len(pauseScreen)):
-                    pauseScreen[b].place_forget()
-                window.title("Excel - Financial Report Q4 2021")
-                window.iconbitmap("assets/excelIcon.ico")
-            elif bossed == False and "excel" not in globals():
-                pauseScreen[5].place(x=420, y=500, anchor="center")
-                pauseScreen[6].place(x=720, y=500, anchor="center")
-                pauseScreen[7].place(x=1020, y=500, anchor="center")
-                pauseScreen[8].place(x=720, y=620, anchor="center")
             canvas.update()
 
 window = Tk()
@@ -195,6 +209,7 @@ buttonFont = font.Font(family="Impact", size=30)
 jumped = True
 paused = False
 bossed = False
+inhomepage = True
 
 canvas.pack()
 window.bind("<space>", jump)
