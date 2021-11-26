@@ -82,10 +82,10 @@ def pause(event):
             global pauseScreen
             pauseScreen = []
             pauseScreen.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
-            pauseScreen.append(canvas.create_text(720, 200, fill="white", font="Impact 80", text="PAUSED"))
+            pauseScreen.append(canvas.create_text(720, 200, fill="white", font="Arial 80", text="PAUSED"))
             pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
             pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
-            pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40",
+            pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Arial 40",
                                                   text=f"Press {str(bindings[1])[1:-1].upper()} to continue"))
             pauseScreen.append(
                 Button(window, text="Settings", image=buttonImage, font=buttonFont, command=settings, compound="center",
@@ -129,10 +129,10 @@ def settings():
     if "pauseScreen" in globals():
         for b in range(5, len(pauseScreen)):
             pauseScreen[b].place_forget()
-    settingsScreen.append(canvas.create_text(420, 150, fill="white", font="Impact 40", text="Jump:", anchor="nw"))
-    settingsScreen.append(canvas.create_text(420, 290, fill="white", font="Impact 40", text="Pause:", anchor="nw"))
-    settingsScreen.append(canvas.create_text(420, 430, fill="white", font="Impact 40", text="Boss key:", anchor="nw"))
-    settingsScreen.append(canvas.create_text(420, 570, fill="white", font="Impact 40", text="Cheat code:", anchor="nw"))
+    settingsScreen.append(canvas.create_text(420, 150, fill="white", font="Arial 40", text="Jump:", anchor="nw"))
+    settingsScreen.append(canvas.create_text(420, 290, fill="white", font="Arial 40", text="Pause:", anchor="nw"))
+    settingsScreen.append(canvas.create_text(420, 430, fill="white", font="Arial 40", text="Boss key:", anchor="nw"))
+    settingsScreen.append(canvas.create_text(420, 570, fill="white", font="Arial 40", text="Cheat code:", anchor="nw"))
     settingsScreen.append(
         Button(window, text=bindings[0], image=buttonImage, font=buttonFont, command=lambda: buttonColorChanger(5),
                compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040",
@@ -208,9 +208,9 @@ def settingsClosed():
         pauseScreen[5].place(x=570, y=500, anchor="center")
         pauseScreen[6].place(x=870, y=500, anchor="center")
         pauseScreen[7].place(x=720, y=620, anchor="center")
-    elif "leaderboardScreen" in globals() and intopfive is True:
+    elif "leaderboardScreen" in globals() and intopfive == True:
         leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=810, anchor="center")
-    elif "leaderboardScreen" in globals() and intopfive is False:
+    elif "leaderboardScreen" in globals() and intopfive == False:
         leaderboardScreen[len(leaderboardScreen) - 3].place(x=575, y=700, anchor="center")
         leaderboardScreen[len(leaderboardScreen) - 2].place(x=875, y=700, anchor="center")
         leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=800, anchor="center")
@@ -225,7 +225,7 @@ def boss(event):
         global excel
         excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
         window.title("Excel - Financial Report Q4 2021")
-        window.iconbitmap("assets/excelIcon.ico")
+        # window.iconbitmap("assets/excelIcon.ico")
         if "settingsScreen" in globals():
             for b in range(5, len(settingsScreen)):
                 settingsScreen[b].place_forget()
@@ -246,7 +246,7 @@ def boss(event):
         canvas.delete(excel)
         del excel
         window.title("Kilburn Bee")
-        window.iconbitmap("assets/bee.ico")
+        # window.iconbitmap("assets/bee.ico")
         if "settingsScreen" in globals():
             settingsScreen[5].place(x=900, y=185, anchor="center")
             settingsScreen[6].place(x=900, y=325, anchor="center")
@@ -278,7 +278,7 @@ def leaderboard(scoreValue):
     leaderboardScreen.append(canvas.create_image(725, 520, image=leaderboardImage))
     leaderboardScreen.append(canvas.create_image(725, 471, image=leaderboardWindowImage))
     leaderboardScreen.append(canvas.create_image(725, 240, image=bigbuttonImage))
-    leaderboardScreen.append(canvas.create_text(725, 240, fill="white", font="Impact 45", text="Top 5"))
+    leaderboardScreen.append(canvas.create_text(725, 240, fill="white", font="Arial 45", text="Top 5"))
     for i in range(len(top5)):
         if int(top5[i][0]) > scoreValue or intopfive is True:
             if intopfive is True:
@@ -286,35 +286,35 @@ def leaderboard(scoreValue):
             else:
                 a = i
             leaderboardScreen.append(
-                canvas.create_text(445, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[a][1], anchor="nw"))
+                canvas.create_text(445, 310 + i * 65, fill="#444444", font="Arial 35", text=top5[a][1], anchor="nw"))
             if i == 0:
                 leaderboardScreen.append(
-                    canvas.create_text(1000, 310 + i * 65, fill="#ffd700", font="Impact 35", text=top5[a][0],
+                    canvas.create_text(1000, 310 + i * 65, fill="#ffd700", font="Arial 35", text=top5[a][0],
                                        anchor="ne"))
             elif i == 1:
                 leaderboardScreen.append(
-                    canvas.create_text(1000, 310 + i * 65, fill="#c0c0c0", font="Impact 35", text=top5[a][0],
+                    canvas.create_text(1000, 310 + i * 65, fill="#c0c0c0", font="Arial 35", text=top5[a][0],
                                        anchor="ne"))
             elif i == 2:
                 leaderboardScreen.append(
-                    canvas.create_text(1000, 310 + i * 65, fill="#cd7f32", font="Impact 35", text=top5[a][0],
+                    canvas.create_text(1000, 310 + i * 65, fill="#cd7f32", font="Arial 35", text=top5[a][0],
                                        anchor="ne"))
             else:
                 leaderboardScreen.append(
-                    canvas.create_text(1000, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[a][0],
+                    canvas.create_text(1000, 310 + i * 65, fill="#444444", font="Arial 35", text=top5[a][0],
                                        anchor="ne"))
         elif intopfive is False:
-            name = Entry(window, fg="#444444", font="Impact 35", width=18, bd=0)
+            name = Entry(window, fg="#444444", font="Arial 35", width=18, bd=0)
             leaderboardScreen.append(canvas.create_window(445, 310 + i * 65, window=name, anchor="nw"))
             place = i
             intopfive = True
     if len(top5) < 5:
-        name = Entry(window, fg="#444444", font="Impact 35", width=18, bd=0)
+        name = Entry(window, fg="#444444", font="Arial 35", width=18, bd=0)
         place = len(top5)
         leaderboardScreen.append(canvas.create_window(445, 310 + (place * 65), window=name, anchor="nw"))
         intopfive = True
     if intopfive is True:
-        leaderboardScreen.append(canvas.create_text(725, 700, fill="white", font="Impact 25",
+        leaderboardScreen.append(canvas.create_text(725, 700, fill="white", font="Arial 22",
                                                     text=f"Congratulation!\nYou are number {place + 1} in our leaderboard!\nPlease, type in your name (16 characters max)",
                                                     justify="center"))
         leaderboardScreen.append(Button(window, text="Submit", image=buttonImage, font=buttonFont,
@@ -344,22 +344,22 @@ def storeRecord(scoreValue, place, name):
     canvas.delete(leaderboardScreen[len(leaderboardScreen) - 2])
     leaderboardScreen[len(leaderboardScreen) - 1].destroy()
     leaderboardScreen.append(
-        canvas.create_text(445, 311 + place * 65, fill="#444444", font="Impact 35", text=top5[place][1], anchor="nw"))
+        canvas.create_text(445, 311 + place * 65, fill="#444444", font="Arial 35", text=top5[place][1], anchor="nw"))
     if place == 0:
         leaderboardScreen.append(
-            canvas.create_text(1000, 311 + place * 65, fill="#ffd700", font="Impact 35", text=top5[place][0],
+            canvas.create_text(1000, 311 + place * 65, fill="#ffd700", font="Arial 35", text=top5[place][0],
                                anchor="ne"))
     elif place == 1:
         leaderboardScreen.append(
-            canvas.create_text(1000, 311 + place * 65, fill="#c0c0c0", font="Impact 35", text=top5[place][0],
+            canvas.create_text(1000, 311 + place * 65, fill="#c0c0c0", font="Arial 35", text=top5[place][0],
                                anchor="ne"))
     elif place == 2:
         leaderboardScreen.append(
-            canvas.create_text(1000, 311 + place * 65, fill="#cd7f32", font="Impact 35", text=top5[place][0],
+            canvas.create_text(1000, 311 + place * 65, fill="#cd7f32", font="Arial 35", text=top5[place][0],
                                anchor="ne"))
     else:
         leaderboardScreen.append(
-            canvas.create_text(1000, 311 + place * 65, fill="#444444", font="Impact 35", text=top5[place][0],
+            canvas.create_text(1000, 311 + place * 65, fill="#444444", font="Arial 35", text=top5[place][0],
                                anchor="ne"))
     leaderboardButtons()
 
@@ -433,7 +433,7 @@ def game():
     gravity = 0.3
     pipes = generatePipes(4, distanceBetweenPipes, sizePipeOpening)
     honeycomb = canvas.create_image(600, 70, image=honeycombImage, tags="honeycombtag")
-    score = canvas.create_text(615, 75, fill="#fbb040", font="Impact 50", text=f"Score: {scoreValue}", anchor="nw",
+    score = canvas.create_text(615, 75, fill="#fbb040", font="Arial 50", text=f"Score: {scoreValue}", anchor="nw",
                                tags="scoretag")
     if path.exists("savefile.txt"):
         settings = []
@@ -483,7 +483,7 @@ def game():
                 if scoring is True:
                     scoreValue = plusone(pipes, scoreValue)
                     canvas.itemconfigure(score, text=f"Score: {scoreValue}")
-            elif hit is True and dead is False:
+            elif hit == True and dead == False:
                 canvas.itemconfigure(bee, image=beeDead)
                 canvas.tag_raise(bee)
                 dead = True
@@ -500,7 +500,7 @@ def game():
             canvas.coords(bee)[1] += speed
             speed += gravity
         else:
-            if saving is True:
+            if saving == True:
                 with open("savefile.txt", "w") as save_file:
                     save_file.write(f"{scoreValue}\n{scoring}\n{speed}\n{animation}\n{hit}\n{dead}\n")
                     for p in pipes:
@@ -544,10 +544,10 @@ leaderboardImage = PhotoImage(file="assets/leaderboard.png")
 leaderboardWindowImage = PhotoImage(file="assets/leaderboardwindow.png")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
-window.iconbitmap("assets/bee.ico")
-buttonFont = font.Font(family="Impact", size=30)
+# window.iconbitmap("assets/bee.ico")
+buttonFont = font.Font(family="Arial", size=30)
 
-if path.exists("leaderboard.txt") is False:
+if path.exists("leaderboard.txt") == False:
     with open("leaderboard.txt", "w") as leaderboardfile2:
         for i in range(5):
             leaderboardfile2.write(str('0 -\n'))
