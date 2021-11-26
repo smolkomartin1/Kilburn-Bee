@@ -25,7 +25,7 @@ def homepage():
         homepageScreen.append(Button(window, text="Continue", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     else:
         homepageScreen.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    homepageScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, command=settings, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     homepageScreen[2].place(x=720, y=520, anchor="center")
     homepageScreen[3].place(x=720, y=650, anchor="center")
@@ -57,8 +57,8 @@ def start():
     game()
 
 def pause(event):
-    global paused, pauseScreen, bossed, homepageScreen, inhomepage, inleaderboard
-    if inhomepage != True and inleaderboard != True:
+    global paused, pauseScreen, bossed, homepageScreen, inhomepage, inleaderboard, insettings
+    if inhomepage != True and inleaderboard != True and insettings != True and"excel" not in globals():
         paused = not paused
         if "pauseScreen" not in globals():
             global pauseScreen
@@ -67,8 +67,8 @@ def pause(event):
             pauseScreen.append(canvas.create_text(720, 200, fill="white", font="Impact 80", text="PAUSED"))
             pauseScreen.append(canvas.create_rectangle(660, 300, 710, 400, fill="white"))
             pauseScreen.append(canvas.create_rectangle(730, 300, 780, 400, fill="white"))
-            pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text="Press ESCAPE to continue"))
-            pauseScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+            pauseScreen.append(canvas.create_text(720, 750, fill="white", font="Impact 40", text=f"Press {str(bindings[1])[1:-1].upper()} to continue"))
+            pauseScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, command=settings, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             pauseScreen.append(Button(window, text="Save", image=buttonImage, font=buttonFont, command=save, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             pauseScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
             pauseScreen[5].place(x=570, y=500, anchor="center")
@@ -82,8 +82,93 @@ def pause(event):
                     canvas.delete(i)
             del pauseScreen
 
+def settings():
+    global settingsScreen, homepageScreen, insettings
+    insettings = True
+    settingsScreen = []
+    settingsScreen.append(canvas.create_image(720, 450, image=leaderboardImage))
+    if "homepageScreen" in globals():
+        for b in range(2, len(homepageScreen)):
+            homepageScreen[b].place_forget()
+        canvas.tag_lower(homepageScreen[1])
+    if "leaderboardScreen" in globals():
+        if "leaderboardScreen" in globals() and intopfive == True:
+            leaderboardScreen[len(leaderboardScreen) - 1].place_forget()
+        elif "leaderboardScreen" in globals() and intopfive == False:
+            leaderboardScreen[len(leaderboardScreen) - 3].place_forget()
+            leaderboardScreen[len(leaderboardScreen) - 2].place_forget()
+            leaderboardScreen[len(leaderboardScreen) - 1].place_forget()
+    if "pauseScreen" in globals():
+        for b in range(5, len(pauseScreen)):
+            pauseScreen[b].place_forget()
+    settingsScreen.append(canvas.create_text(420, 150, fill="white", font="Impact 40", text="Jump:", anchor="nw"))
+    settingsScreen.append(canvas.create_text(420, 290, fill="white", font="Impact 40", text="Pause:", anchor="nw"))
+    settingsScreen.append(canvas.create_text(420, 430, fill="white", font="Impact 40", text="Boss key:", anchor="nw"))
+    settingsScreen.append(canvas.create_text(420, 570, fill="white", font="Impact 40", text="Cheat code:", anchor="nw"))
+    settingsScreen.append(Button(window, text=bindings[0], image=buttonImage, font=buttonFont, command=lambda:buttonColorChanger(5), compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    settingsScreen.append(Button(window, text=bindings[1], image=buttonImage, font=buttonFont, command=lambda:buttonColorChanger(6), compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    settingsScreen.append(Button(window, text=bindings[2], image=buttonImage, font=buttonFont, command=lambda:buttonColorChanger(7), compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    settingsScreen.append(Button(window, text=bindings[3], image=buttonImage, font=buttonFont, command=lambda:buttonColorChanger(8), compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    settingsScreen.append(Button(window, text="Back", image=buttonImage, font=buttonFont, command=settingsClosed, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    settingsScreen[5].place(x=900, y=185, anchor="center")
+    settingsScreen[6].place(x=900, y=325, anchor="center")
+    settingsScreen[7].place(x=900, y=465, anchor="center")
+    settingsScreen[8].place(x=900, y=605, anchor="center")
+    settingsScreen[9].place(x=720, y=735, anchor="center")
+
+def buttonColorChanger(number):
+    global settingsScreen
+    settingsScreen[number].config(text="Press any key", fg="#fbb040")
+    for i in range(4):
+        window.unbind(bindings[i])
+    window.bind("<Key>", lambda x: bindingChanger(x, number))
+
+def bindingChanger(event, number):
+    global settingsScreen
+    pressedKey = f"<{event.keysym}>"
+    if pressedKey in bindings:
+        settingsScreen[number].config(text="Already used")
+    else:
+        settingsScreen[number].config(text=pressedKey)
+    bindings[number - 5] = pressedKey
+    canvas.itemconfigure(pauseScreen[4], text=f"Press {str(bindings[1])[1:-1].upper()} to continue")
+    binder(bindings)
+
+def binder(bindings):
+    window.bind(bindings[0], jump)
+    window.bind(bindings[1], pause)
+    window.bind(bindings[2], boss)
+    window.bind(bindings[3], cheat)
+    with open("bindings.txt", "w") as bindfile:
+        bindfile.write(str(bindings)[1:-1])
+
+def settingsClosed():
+    global settingsScreen, insettings
+    insettings = False
+    for i in settingsScreen:
+        if type(i) == Button:
+            i.destroy()
+        else:
+            canvas.delete(i)
+    del settingsScreen
+    if "homepageScreen" in globals():
+        homepageScreen[2].place(x=720, y=520, anchor="center")
+        homepageScreen[3].place(x=720, y=650, anchor="center")
+        homepageScreen[4].place(x=720, y=770, anchor="center")
+        canvas.tag_raise(homepageScreen[1])
+    elif "pauseScreen" in globals():
+        pauseScreen[5].place(x=570, y=500, anchor="center")
+        pauseScreen[6].place(x=870, y=500, anchor="center")
+        pauseScreen[7].place(x=720, y=620, anchor="center")
+    elif "leaderboardScreen" in globals() and intopfive == True:
+        leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=810, anchor="center")
+    elif "leaderboardScreen" in globals() and intopfive == False:
+        leaderboardScreen[len(leaderboardScreen) - 3].place(x=575, y=700, anchor="center")
+        leaderboardScreen[len(leaderboardScreen) - 2].place(x=875, y=700, anchor="center")
+        leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=800, anchor="center")
+
 def boss(event):
-    global bossed, paused, excel, pauseScreen, homepageScreen, leaderboardScreen, intopfive, honeycomb, score
+    global bossed, paused, excel, pauseScreen, homepageScreen, leaderboardScreen, settingsScreen, intopfive
     if bossed == False:
         bossed = True
         if paused != True:
@@ -92,12 +177,15 @@ def boss(event):
         excel = canvas.create_image(0, 0, image=excelImage, anchor="nw")
         window.title("Excel - Financial Report Q4 2021")
         window.iconbitmap("assets/excelIcon.ico")
-        if "pauseScreen" in globals():
-            for b in range(5, len(pauseScreen)):
-                pauseScreen[b].place_forget()
+        if "settingsScreen" in globals():
+            for b in range(5, len(settingsScreen)):
+                settingsScreen[b].place_forget()
         elif "homepageScreen" in globals():
             for b in range(2, len(homepageScreen)):
                 homepageScreen[b].place_forget()
+        elif "pauseScreen" in globals():
+            for b in range(5, len(pauseScreen)):
+                pauseScreen[b].place_forget()
         elif "leaderboardScreen" in globals() and intopfive == True:
             leaderboardScreen[len(leaderboardScreen) - 1].place_forget()
         elif "leaderboardScreen" in globals() and intopfive == False:
@@ -110,14 +198,20 @@ def boss(event):
         del excel
         window.title("Kilburn Bee")
         window.iconbitmap("assets/bee.ico")
-        if "pauseScreen" in globals():
-            pauseScreen[5].place(x=570, y=500, anchor="center")
-            pauseScreen[6].place(x=870, y=500, anchor="center")
-            pauseScreen[7].place(x=720, y=620, anchor="center")
+        if "settingsScreen" in globals():
+            settingsScreen[5].place(x=900, y=185, anchor="center")
+            settingsScreen[6].place(x=900, y=325, anchor="center")
+            settingsScreen[7].place(x=900, y=465, anchor="center")
+            settingsScreen[8].place(x=900, y=605, anchor="center")
+            settingsScreen[9].place(x=720, y=735, anchor="center")
         elif "homepageScreen" in globals():
             homepageScreen[2].place(x=720, y=520, anchor="center")
             homepageScreen[3].place(x=720, y=650, anchor="center")
             homepageScreen[4].place(x=720, y=770, anchor="center")
+        elif "pauseScreen" in globals():
+            pauseScreen[5].place(x=570, y=500, anchor="center")
+            pauseScreen[6].place(x=870, y=500, anchor="center")
+            pauseScreen[7].place(x=720, y=620, anchor="center")
         elif "leaderboardScreen" in globals() and intopfive == True:
             leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=810, anchor="center")
         elif "leaderboardScreen" in globals() and intopfive == False:
@@ -198,7 +292,7 @@ def storeRecord(scoreValue, place, name):
 def leaderboardButtons():
     global leaderboardScreen
     leaderboardScreen.append(Button(window, text="New Game", image=buttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    leaderboardScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    leaderboardScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, command=settings, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     leaderboardScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     leaderboardScreen[len(leaderboardScreen) - 3].place(x=575, y=700, anchor="center")
     leaderboardScreen[len(leaderboardScreen) - 2].place(x=875, y=700, anchor="center")
@@ -352,21 +446,24 @@ bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
 window.iconbitmap("assets/bee.ico")
 buttonFont = font.Font(family="Impact", size=30)
 
-with open("leaderboard.txt") as leaderboardfile:
+with open("leaderboard.txt", "w+") as leaderboardfile:
     top5 = [row.strip().split() for row in leaderboardfile]
+if path.exists("bindings.txt"):
+    with open("bindings.txt") as bindingsfile:
+        bindings = bindingsfile.readline().strip()[1:-1].split("', '")
+else:
+    bindings = ["<space>", "<Escape>", "<c>", "<b>"]
 
 jumped = True
 inhomepage = True
 inleaderboard = False
+insettings = False
 paused = False
 bossed = False
 saving = False
 slowmo = False
 
 canvas.pack()
-window.bind("<space>", jump)
-window.bind("<Escape>", pause)
-window.bind("<b>", boss)
-window.bind("<c>", cheat)
+binder(bindings)
 homepage()
 window.mainloop()
