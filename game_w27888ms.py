@@ -1,5 +1,5 @@
 # Screen resolution: 1440x900
-from tkinter import Tk, Canvas, PhotoImage, Button, font
+from tkinter import Tk, Canvas, PhotoImage, Button, Entry, font
 from time import sleep
 from random import randint
 from os import path
@@ -13,38 +13,38 @@ def save():
     saving = True
 
 def homepage():
-    global homepageList
-    homepageList = []
-    homepageList.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
-    homepageList.append(canvas.create_image(720, 240, image=logoImage))
+    global homepageScreen
+    homepageScreen = []
+    homepageScreen.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
+    homepageScreen.append(canvas.create_image(720, 240, image=logoImage))
     if path.exists("savefile.txt"):
-        homepageList.append(Button(window, text="Continue", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+        homepageScreen.append(Button(window, text="Continue", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
     else:
-        homepageList.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    homepageList.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    homepageList.append(Button(window, text="Leaderboard", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    homepageList.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    homepageList.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
-    homepageList[2].place(x=720, y=520, anchor="center")
-    homepageList[3].place(x=420, y=650, anchor="center")
-    homepageList[4].place(x=720, y=650, anchor="center")
-    homepageList[5].place(x=1020, y=650, anchor="center")
-    homepageList[6].place(x=720, y=770, anchor="center")
+        homepageScreen.append(Button(window, text="New Game", image=bigbuttonImage, font=buttonFont, command=start, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageScreen.append(Button(window, text="Leaderboard", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    homepageScreen[2].place(x=720, y=520, anchor="center")
+    homepageScreen[3].place(x=420, y=650, anchor="center")
+    homepageScreen[4].place(x=720, y=650, anchor="center")
+    homepageScreen[5].place(x=1020, y=650, anchor="center")
+    homepageScreen[6].place(x=720, y=770, anchor="center")
     canvas.update()
 
 def start():
-    global homepageList, inhomepage
-    for i in homepageList:
+    global homepageScreen, inhomepage
+    for i in homepageScreen:
         if type(i) == Button:
             i.destroy()
         else:
             canvas.delete(i)
-    del homepageList
+    del homepageScreen
     inhomepage = False
     game()
 
 def pause(event):
-    global paused, pauseScreen, bossed, homepageList, inhomepage
+    global paused, pauseScreen, bossed, homepageScreen, inhomepage
     if inhomepage != True:
         paused = not paused
         if "pauseScreen" not in globals():
@@ -72,7 +72,7 @@ def pause(event):
             del pauseScreen
 
 def boss(event):
-    global bossed, paused, excel, pauseScreen, homepageList, inhomepage
+    global bossed, paused, excel, pauseScreen, homepageScreen, inhomepage
     if bossed == False:
         bossed = True
         if paused != True:
@@ -84,9 +84,9 @@ def boss(event):
         if "pauseScreen" in globals():
             for b in range(5, len(pauseScreen)):
                 pauseScreen[b].place_forget()
-        elif "homepageList" in globals():
-            for b in range(2, len(homepageList)):
-                homepageList[b].place_forget()
+        elif "homepageScreen" in globals():
+            for b in range(2, len(homepageScreen)):
+                homepageScreen[b].place_forget()
     else:
         bossed = False
         canvas.delete(excel)
@@ -98,13 +98,92 @@ def boss(event):
             pauseScreen[6].place(x=720, y=500, anchor="center")
             pauseScreen[7].place(x=1020, y=500, anchor="center")
             pauseScreen[8].place(x=720, y=620, anchor="center")
-        elif "homepageList" in globals():
-            homepageList[2].place(x=720, y=520, anchor="center")
-            homepageList[3].place(x=420, y=650, anchor="center")
-            homepageList[4].place(x=720, y=650, anchor="center")
-            homepageList[5].place(x=1020, y=650, anchor="center")
-            homepageList[6].place(x=720, y=770, anchor="center")
+        elif "homepageScreen" in globals():
+            homepageScreen[2].place(x=720, y=520, anchor="center")
+            homepageScreen[3].place(x=420, y=650, anchor="center")
+            homepageScreen[4].place(x=720, y=650, anchor="center")
+            homepageScreen[5].place(x=1020, y=650, anchor="center")
+            homepageScreen[6].place(x=720, y=770, anchor="center")
     canvas.update()
+
+def leaderboard(scoreValue):
+    global leaderboardScreen
+    intopfive = False
+    place = 0
+    leaderboardScreen.append(canvas.create_image(725, 520, image=leaderboardImage))
+    leaderboardScreen.append(canvas.create_image(725, 471, image=leaderboardWindowImage))
+    leaderboardScreen.append(canvas.create_image(725, 240, image=bigbuttonImage))
+    leaderboardScreen.append(canvas.create_text(725, 240, fill="white", font="Impact 45", text="Top 5"))
+    print(len(top5))
+    for i in range(len(top5)):
+        if int(top5[i][0]) > scoreValue or intopfive == True:
+            leaderboardScreen.append(canvas.create_text(445, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[i][1], anchor="nw"))
+            if i == 0:
+                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#ffd700", font="Impact 35", text=top5[i][0], anchor="ne"))
+            elif i == 1:
+                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#c0c0c0", font="Impact 35", text=top5[i][0], anchor="ne"))
+            elif i == 2:
+                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#cd7f32", font="Impact 35", text=top5[i][0], anchor="ne"))
+            else:
+                leaderboardScreen.append(canvas.create_text(1000, 310 + i * 65, fill="#444444", font="Impact 35", text=top5[i][0], anchor="ne"))
+        elif intopfive == False:
+            name = Entry(window, fg="#444444", font="Impact 35", width=18, bd=0)
+            leaderboardScreen.append(canvas.create_window(445, 310 + i * 65, window=name, anchor="nw"))
+            place = i
+            intopfive = True
+    if len(top5) < 5:
+        name = Entry(window, fg="#444444", font="Impact 35", width=18, bd=0)
+        place = len(top5)
+        leaderboardScreen.append(canvas.create_window(445, 310 + (place * 65), window=name, anchor="nw"))
+        intopfive = True
+    if intopfive == True:
+        leaderboardScreen.append(canvas.create_text(725, 700, fill="white", font="Impact 25", text=f"Congratulation!\nYou are number {place + 1} in our leaderboard!\nPlease, type in your name (16 characters max)", justify="center"))
+        leaderboardScreen.append(Button(window, text="Submit", image=buttonImage, font=buttonFont, command=lambda: storeRecord(scoreValue, place, name), compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+        leaderboardScreen[len(leaderboardScreen) - 1].place(x=725, y=810, anchor="center")
+    else:
+        leaderboardButtons()
+
+def storeRecord(scoreValue, place, name):
+    global leaderboardImageScreen
+    nametoadd = name.get()
+    if len(top5) < 5:
+        if len(nametoadd) >= 16:
+            top5.append([int(scoreValue), nametoadd[:16]])
+        else:
+            top5.append([int(scoreValue), nametoadd])
+    else:
+        if len(nametoadd) >= 16:
+            top5[place][1] = nametoadd[:16]
+        else:
+            top5[place][1] = nametoadd
+        top5[place][0] = int(scoreValue)
+    with open("leaderboard.txt", "w") as saving_savefile:
+        for x in top5:
+            saving_savefile.write(f"{x[0]} {x[1]}\n")
+    name.destroy()
+    canvas.delete(leaderboardScreen[len(leaderboardScreen) - 2])
+    leaderboardScreen[len(leaderboardScreen) - 1].destroy()
+    leaderboardScreen.append(canvas.create_text(445, 311 + place * 65, fill="#444444", font="Impact 35", text=top5[place][1], anchor="nw"))
+    if place == 0:
+        leaderboardScreen.append(canvas.create_text(1000, 311 + place * 65, fill="#ffd700", font="Impact 35", text=top5[place][0], anchor="ne"))
+    elif place == 1:
+        leaderboardScreen.append(canvas.create_text(1000, 311 + place * 65, fill="#c0c0c0", font="Impact 35", text=top5[place][0], anchor="ne"))
+    elif place == 2:
+        leaderboardScreen.append(canvas.create_text(1000, 311 + place * 65, fill="#cd7f32", font="Impact 35", text=top5[place][0], anchor="ne"))
+    else:
+        leaderboardScreen.append(canvas.create_text(1000, 311 + place * 65, fill="#444444", font="Impact 35", text=top5[place][0], anchor="ne"))
+    leaderboardButtons()
+
+def leaderboardButtons():
+    global leaderboardScreen
+    leaderboardScreen.append(Button(window, text="New Game", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    leaderboardScreen.append(Button(window, text="Settings", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    leaderboardScreen.append(Button(window, text="Cheat Codes", image=buttonImage, font=buttonFont, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    leaderboardScreen.append(Button(window, text="Exit", image=buttonImage, font=buttonFont, command=window.destroy, compound="center", fg="white", activeforeground="#fbb040", bg="#404040", activebackground="#404040", highlightthickness=0, bd=0))
+    leaderboardScreen[len(leaderboardScreen) - 4].place(x=575, y=700, anchor="center")
+    leaderboardScreen[len(leaderboardScreen) - 3].place(x=875, y=700, anchor="center")
+    leaderboardScreen[len(leaderboardScreen) - 2].place(x=575, y=800, anchor="center")
+    leaderboardScreen[len(leaderboardScreen) - 1].place(x=875, y=800, anchor="center")
 
 def plusone(pipes, scoreValue):
     global scoring
@@ -140,7 +219,7 @@ def collision(pipes):
     return False
 
 def game():
-    global jumped, paused, scoring, saving, pauseScreen
+    global jumped, paused, scoring, saving, pauseScreen, leaderboardScreen
     scoreValue = 0
     distanceBetweenPipes = 550
     sizePipeOpening = 300
@@ -218,6 +297,11 @@ def game():
                 saving = False
                 pauseScreen[6].config(text="Saved!")
             canvas.update()
+    leaderboardScreen = []
+    leaderboardScreen.append(canvas.create_image(0, 0, image=blacknessImage, anchor="nw"))
+    canvas.tag_raise(honeycomb)
+    canvas.tag_raise(score)
+    leaderboard(scoreValue)
 
 window = Tk()
 window.title("Kilburn Bee")
@@ -235,10 +319,16 @@ honeycombImage = PhotoImage(file="assets/honeycomb.png")
 blacknessImage = PhotoImage(file="assets/blackness.png")
 excelImage = PhotoImage(file="assets/excel.png")
 kilburn = PhotoImage(file="assets/kilburn.png")
+leaderboardImage = PhotoImage(file="assets/leaderboard.png")
+leaderboardWindowImage = PhotoImage(file="assets/leaderboardwindow.png")
 canvas.create_image(0, 0, image=kilburn, anchor="nw")
 bee = canvas.create_image(250, 450, image=beeImages[7], anchor="s")
 window.iconbitmap("assets/bee.ico")
 buttonFont = font.Font(family="Impact", size=30)
+
+with open("leaderboard.txt") as leaderboardfile:
+    top5 = [row.strip().split() for row in leaderboardfile]
+
 
 jumped = True
 inhomepage = True
