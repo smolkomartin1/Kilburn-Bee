@@ -544,7 +544,7 @@ def game():
             canvas.update()
             # our slow motion cheat code slows the refesh speed (without any delay the bee falls striaght down)
             if slowmo is False:
-                sleep(0.011)
+                sleep(0.001)
             else:
                 sleep(0.1)
             # if bee has fallen then make it lay above the ground (it can fall through the canvas)
